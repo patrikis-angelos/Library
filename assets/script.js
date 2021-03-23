@@ -1,4 +1,5 @@
 let library = [];
+let container = document.querySelector('.container')
 let title = document.querySelector('#title')
 let author = document.querySelector('#author')
 let pages = document.querySelector('#pages')
@@ -21,7 +22,18 @@ function addBookToLibrary() {
 
   library.push(newBook)
 
-  console.log(library)
+  showBook()
+}
+
+function showBook() {
+  container.innerHTML = ''
+  for (let i = 0; i < library.length; i++) {
+    let content = document.createElement('div')
+    let text = document.createElement('p')
+    text.textContent = library[i].info()
+    content.appendChild(text)
+    container.appendChild(content)
+  }
 }
 
 button.addEventListener('click', addBookToLibrary)
