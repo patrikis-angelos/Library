@@ -8,20 +8,35 @@ const read = document.querySelector('#read');
 const form = document.querySelector('form');
 const newBookBtn = document.querySelector('#form');
 
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-}
+const Book = (title, author, pages, read) => {
+  const getTitle = () => title;
+  const getAuthor = () => author;
+  const getPages = () => pages;
+  const getRead = () => read;
+  const alreadyRead = () => (read ? 'already read' : 'not read yet');
 
-Book.prototype.info = function () {
-  const alreadyRead = (this.read) ? 'already read' : 'not read yet';
-  return `${this.title} by ${this.author}, ${this.pages} pages, ${alreadyRead}`;
+  const info = () => `${getTitle()} by ${getAuthor()}, ${getPages()} pages, ${alreadyRead()}`;
+
+  const changeRead = () => {
+    read = !read;
+  };
+
+  return {
+    info, changeRead, getTitle, getAuthor, getPages, getRead,
+  };
 };
 
 function saveLibrary() {
-  localStorage.lib = JSON.stringify(library);
+  const temp = [];
+  for (let i = 0; i < library.length; i += 1) {
+    const info = [
+      library[i].getTitle(),
+      library[i].getAuthor(),
+      library[i].getPages(),
+      library[i].getRead()];
+    temp.push(info);
+  }
+  localStorage.lib = JSON.stringify(temp);
 }
 
 function removeBook() {
@@ -31,10 +46,10 @@ function removeBook() {
   showBooks(); // eslint-disable-line
 }
 
-function changeRead() {
+function bookRead() {
   const { id } = this.parentNode;
   const para = this.parentNode.querySelector('p');
-  library[id].read = !library[id].read;
+  library[id].changeRead();
   para.innerHTML = library[id].info();
   saveLibrary();
 }
@@ -52,7 +67,7 @@ function showBooks() {
     removeBtn.textContent = 'Remove';
 
     const changeReadBtn = document.createElement('button');
-    changeReadBtn.addEventListener('click', changeRead);
+    changeReadBtn.addEventListener('click', bookRead);
     changeReadBtn.textContent = 'Readed?';
 
     content.appendChild(text);
@@ -63,7 +78,7 @@ function showBooks() {
 }
 
 function addBookToLibrary() {
-  const newBook = new Book(title.value, author.value, pages.value, read.checked);
+  const newBook = Book(title.value, author.value, pages.value, read.checked);
 
   library.push(newBook);
 
@@ -77,9 +92,10 @@ function showForm() {
 }
 
 function loadLibrary() {
-  const books = JSON.parse(localStorage.lib);
-  for (let i = 0; i < books.length; i += 1) {
-    Object.setPrototypeOf(books[i], Book.prototype);
+  const temp = JSON.parse(localStorage.lib);
+  const books = [];
+  for (let i = 0; i < temp.length; i += 1) {
+    books.push(Book(temp[i][0], temp[i][1], temp[i][2], temp[i][3]));
   }
   return books;
 }
