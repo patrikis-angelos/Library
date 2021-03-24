@@ -14,7 +14,7 @@ function Book(title, author, pages, read) {
   this.pages = pages;
   this.read = read;
   this.info = function() {
-    let alreadyRead = (read)? 'already read' : 'not read yet'
+    let alreadyRead = (this.read)? 'already read' : 'not read yet'
     return title + ' by ' + author + ', ' + pages + ' pages' + ', ' + alreadyRead 
   }
 };
@@ -39,7 +39,12 @@ function showBooks() {
     removeBtn.addEventListener('click', removeBook);
     removeBtn.textContent = 'Remove';
 
+    let changeReadBtn = document.createElement('button');
+    changeReadBtn.addEventListener('click', changeRead);
+    changeReadBtn.textContent = 'Readed?'
+
     content.appendChild(text);
+    content.appendChild(changeReadBtn);
     content.appendChild(removeBtn);
     container.appendChild(content);
   }
@@ -54,6 +59,13 @@ function removeBook() {
   id = this.parentNode.id;
   library.splice(id, 1);
   showBooks()
+}
+
+function changeRead() {
+  id = this.parentNode.id;
+  let para = this.parentNode.querySelector('p');
+  library[id].read = !library[id].read;
+  para.innerHTML = library[id].info();
 }
 
 button.addEventListener('click', addBookToLibrary);
