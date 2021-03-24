@@ -24,16 +24,23 @@ function addBookToLibrary() {
 
   library.push(newBook)
 
-  showBook()
+  showBooks()
 }
 
-function showBook() {
+function showBooks() {
   container.innerHTML = ''
   for (let i = 0; i < library.length; i++) {
     let content = document.createElement('div');
+    content.setAttribute("id", i);
     let text = document.createElement('p');
     text.textContent = library[i].info();
+
+    let removeBtn = document.createElement('button');
+    removeBtn.addEventListener('click', removeBook);
+    removeBtn.textContent = 'Remove';
+
     content.appendChild(text);
+    content.appendChild(removeBtn);
     container.appendChild(content);
   }
 }
@@ -41,6 +48,12 @@ function showBook() {
 function showForm() {
   form.classList.toggle('hidden');
   btn.classList.toggle('hidden');
+}
+
+function removeBook() {
+  id = this.parentNode.id;
+  library.splice(id, 1);
+  showBooks()
 }
 
 button.addEventListener('click', addBookToLibrary);
