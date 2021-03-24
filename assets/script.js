@@ -13,17 +13,19 @@ function Book(title, author, pages, read) {
   this.author = author;
   this.pages = pages;
   this.read = read;
-  this.info = function() {
-    let alreadyRead = (this.read)? 'already read' : 'not read yet'
-    return title + ' by ' + author + ', ' + pages + ' pages' + ', ' + alreadyRead 
-  }
 };
+
+Book.prototype.info = function() {
+  let alreadyRead = (this.read)? 'already read' : 'not read yet'
+  return this.title + ' by ' + this.author + ', ' + this.pages + ' pages' + ', ' + alreadyRead 
+}
 
 function addBookToLibrary() {
   let newBook = new Book(title.value, author.value, pages.value, read.checked)
 
   library.push(newBook)
 
+  saveLibrary()
   showBooks()
 }
 
@@ -58,6 +60,7 @@ function showForm() {
 function removeBook() {
   id = this.parentNode.id;
   library.splice(id, 1);
+  saveLibrary()
   showBooks()
 }
 
@@ -66,6 +69,24 @@ function changeRead() {
   let para = this.parentNode.querySelector('p');
   library[id].read = !library[id].read;
   para.innerHTML = library[id].info();
+  saveLibrary()
+}
+
+function saveLibrary() {
+  localStorage.lib = JSON.stringify(library);
+}
+
+function loadLibrary() {
+  let books = JSON.parse(localStorage.lib)
+  for (let i = 0; i < books.length; i++) {
+    Object.setPrototypeOf(books[i], Book.prototype);
+  }
+  return books;
+}
+
+if (localStorage.lib) {
+  library = loadLibrary()
+  showBooks();
 }
 
 button.addEventListener('click', addBookToLibrary);
